@@ -56,3 +56,13 @@ Now check if the current folder is the new created UI folder. Then issue the com
 ``` bash
 npm create vite@latest FoodShare -- --template react-ts
 ```
+In order to see the generated running app we have to issue the following command:
+
+```bash
+cd FoodShare
+npm install
+npm run dev
+
+### Cleanup of the Generated Project
+
+We will delete almost all of the generated project since we will write our own code.
