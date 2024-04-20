@@ -1,19 +1,14 @@
-import { useState } from 'react'
-import ModalDialog from './components/dialog/ModalDialog'
+import Card from './components/controls/card/Card'
+import CardHeader from './components/controls/card/CardHeader'
+import CardBody from './components/controls/card/CardBody'
 
 function App() {
-  const [modal, setModal] = useState(false)
-
-  const modalClosed = (data: string | undefined) => {
-    console.log(data)
-    setModal(false)
-  }
   return (
     <>
-      <button onClick={() => setModal(true)}>Open modal</button>
-      <ModalDialog openModal={modal} closeModal={modalClosed}>
-        <p>This is modals content</p>
-      </ModalDialog>
+      <Card>
+        <CardHeader>This is the title</CardHeader>
+        <CardBody>Hello World!</CardBody>
+      </Card>
     </>
   )
 }

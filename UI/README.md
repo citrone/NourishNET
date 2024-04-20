@@ -76,3 +76,8 @@ informations. We will use it accross the application therefore it is a common co
 Dialog component will use the new `dialog` HTML element which helps us creating such components.
 Showing and hiding the dialog will be controlled using a state variable in the dialog's parent.
 Also, dialog will return it's data to the parent component that is responsible to handle it.
+
+### Add Card Component
+
+Card component will display data in a rectangular area that looks like a card. It has a header
+which displays card's title and a body which contains card's content.
