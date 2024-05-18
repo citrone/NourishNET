@@ -1,4 +1,4 @@
-type ClickHandler = () => void
+type ClickHandler = (e: React.MouseEvent) => void
 
 export interface IBeneficiary {
   id: number;

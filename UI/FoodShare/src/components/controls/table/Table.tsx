@@ -47,7 +47,7 @@ const Table = ({ header, actions = null, data }: { header: string[], actions: IA
       mappedHeader.push(<th colSpan={actions.length}>Actions</th>)
     }
 
-    return <tr key="the_unique_header_key">{mappedHeader}</tr>
+    return <tr>{mappedHeader}</tr>
   }
 
   /**
@@ -62,7 +62,7 @@ const Table = ({ header, actions = null, data }: { header: string[], actions: IA
       if (actions) {
         actionsRow = actions.map(generateIconCells)
       }
-      return <tr key={element.id}>{row}{actionsRow}</tr>
+      return <tr key={element.id} onClick={(e) => console.log(e)}>{row}{actionsRow}</tr>
     })
 
     return rowData
@@ -71,7 +71,7 @@ const Table = ({ header, actions = null, data }: { header: string[], actions: IA
   const generateDataRows = (key: string, element: IBeneficiary) => {
     if (key === 'id') return
     const align = typeof element[key as keyof IBeneficiary] === 'number' ? 'right' : 'left'
-    return <td style={{ textAlign: align }}>{element[key as keyof IBeneficiary]}</td>
+    return <td key={key} style={{ textAlign: align }}>{element[key as keyof IBeneficiary]}</td>
   }
 
   return (
