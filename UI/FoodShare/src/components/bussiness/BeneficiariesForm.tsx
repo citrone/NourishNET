@@ -1,16 +1,38 @@
-import { useState } from "react"
+import {ChangeEvent, useState } from "react"
 import { BeneficiaryForm } from '../../types/BeneficiaryTypes.ts'
 import './BeneficiariesForm.css'
+import CitiesModel from "../../models/Cities.ts";
+import MyDropdown from "../controls/dropdown/Dropdown.tsx";
 
+/**
+ * SubmitHandler type is called when the user submits the form
+ */
 export type SubmitHandler = (formData: BeneficiaryForm) => void
 
+/**
+ * This component implements the Beneficiaries form used to handle the Add and Update operations
+ *
+ * @param onSubmit - callback function implemented by the caller to handle data submission
+ * @param data
+ */
+const BeneficiariesForm = ({ onSubmit, data }: { onSubmit: SubmitHandler, data: never }) => {
+    const cities = CitiesModel
+  const [formData, setFormData] = useState(data)
 
-const BeneficiariesForm = ({ onSubmit }: { onSubmit: SubmitHandler }) => {
-  const [formData, setFormData] = useState({ name: "", city: "", address: "", capacity: 0 })
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  /**
+   * Function called when one of the controls in the form changes it's value. This function updates
+   * the formData state of the form so that it will contain allways updated data.
+   *
+   * @param event
+   */
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
     setFormData(prevFormData => ({ ...prevFormData, [name]: value }))
+  }
+
+  const onCityChange = (event: ChangeEvent<HTMLSelectElement>) => {
+      const {value} = event.target
+      setFormData(prevFormData => ({...prevFormData, cityId: value }))
   }
 
 
@@ -19,8 +41,8 @@ const BeneficiariesForm = ({ onSubmit }: { onSubmit: SubmitHandler }) => {
       <form method="dialog" onSubmit={() => onSubmit(formData)}>
         <label htmlFor="name">Name</label>
         <input id="name" name="name" value={formData.name} onChange={handleChange} required />
-        <label htmlFor="city">City</label>
-        <input id="city" name="city" value={formData.city} onChange={handleChange} required />
+        <label>City</label>
+        <MyDropdown data={cities} onChange={onCityChange} />
         <label htmlFor="address">Address</label>
         <input id="address" name="address" value={formData.address} onChange={handleChange} required />
         <label htmlFor="capacity">Capacity</label>

@@ -1,29 +1,51 @@
 import useBeneficiary from '../../hooks/useBeneficiary.ts'
-import { IActions } from '../../types/CommonTypes.ts'
+import {IActions, IBeneficiary} from '../../types/CommonTypes.ts'
 import Table from '../controls/table/Table.tsx'
 import Button from '../controls/button/Button.tsx'
 import ModalDialog from '../controls/dialog/ModalDialog.tsx'
-import { useState } from 'react'
+import {useEffect, useState} from 'react'
 import BeneficiariesForm from './BeneficiariesForm.tsx'
-import { BeneficiaryForm } from '../../types/BeneficiaryTypes.ts'
+
+type BeneficiaryData = {
+  id: number,
+  name: string,
+  cityName: string,
+  address: string,
+  capacity: number
+}
 
 const Beneficiaries = () => {
   const { data, loading } = useBeneficiary().getBeneficiary()
   const header = ['Name', 'City', 'Address', 'Capacity']
+  const [beneficiaries, setBeneficiaries] = useState<IBeneficiary[]>([])
   const [showAddBeneficiaryDialog, setShowAddBeneficiaryDialog] = useState(false)
-  const [addBeneficiaryData, setAddBeneficiaryData] = useState<BeneficiaryForm>()
+  const [beneficiaryData, setBeneficiaryData] = useState<BeneficiaryData>({
+    id: 0,
+    name: '',
+    cityName: '',
+    address: '',
+    capacity: 0
+  })
 
-  const { addBeneficiary } = useBeneficiary()
+  const { addBeneficiary, editBeneficiary, deleteBeneficiary } = useBeneficiary()
+
+  useEffect(() => {
+    if (data) {
+      setBeneficiaries(data)
+    }
+  }, [data])
 
   const addAction = () => {
     setShowAddBeneficiaryDialog(true)
-    addBeneficiary(addBeneficiaryData)
   }
-  const editAction = () => {
-    alert('Edit action')
+  const editAction = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const id = e.currentTarget?.parentElement?.parentElement?.dataset?.key
+    const currentBeneficiary = beneficiaries.find(beneficiary => beneficiary.id == id)
+    setBeneficiaryData(currentBeneficiary)
+    setShowAddBeneficiaryDialog(true)
   }
-  const removeAction = () => {
-    alert('Remove action')
+  const removeAction = async  (e: React.MouseEvent<HTMLButtonElement>) => {
+    setBeneficiaries(await deleteBeneficiary(e.currentTarget?.parentElement?.parentElement?.dataset?.key))
   }
   const actions: IActions[] = [
     {
@@ -36,17 +58,20 @@ const Beneficiaries = () => {
     },
   ]
 
-  const onSubmit = (data: BeneficiaryForm) => {
-    setAddBeneficiaryData(data)
-
+  const onSubmit = async (submittedData: BodyInit) => {
+    if (beneficiaryData.id === 0) {
+      setBeneficiaries(await addBeneficiary(submittedData))
+    } else {
+      setBeneficiaries(await editBeneficiary(submittedData))
+    }
   }
 
   return (<div>
     {loading && <p>Loading...</p>}
-    {data && <Table header={header} data={data} actions={actions} />}
+    {beneficiaries && <Table header={header} data={beneficiaries} actions={actions} />}
     <Button onClick={addAction}>Add Beneficiary</Button>
     {showAddBeneficiaryDialog && <ModalDialog /*closeModal={closeModalHandler}*/ openModal={showAddBeneficiaryDialog}>
-      <BeneficiariesForm onSubmit={onSubmit} />
+      <BeneficiariesForm onSubmit={onSubmit} data={beneficiaryData} />
     </ModalDialog>}
   </div>)
 }

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import {ReactNode, useState, useEffect} from 'react'
 
 import { IActions, IBeneficiary } from '../../../types/CommonTypes'
 
@@ -12,6 +12,10 @@ import './Table.css'
  * @prop data - an object containing the data content of the table
  */
 const Table = ({ header, actions = null, data }: { header: string[], actions: IActions[] | null, data: IBeneficiary[] }) => {
+  const [tableData, setTableData] = useState([])
+  useEffect(() => {
+    setTableData(data)
+  }, [data]);
   /**
    * This function generated the cells containing the action buttons. On the buttons there is an icon representing
    * the specific action. It is called above when we map on the actions sent to the component as a prop.
@@ -56,13 +60,13 @@ const Table = ({ header, actions = null, data }: { header: string[], actions: IA
    */
   type GetDataRows = () => ReactNode[]
   const getDataRows: GetDataRows = () => {
-    const rowData: ReactNode[] = data.map((element: IBeneficiary) => {
+    const rowData: ReactNode[] = tableData.map((element: IBeneficiary) => {
       const row = Object.keys(element).map(key => generateDataRows(key, element))
       let actionsRow: ReactNode[] = []
       if (actions) {
         actionsRow = actions.map(generateIconCells)
       }
-      return <tr key={element.id} onClick={(e) => console.log(e)}>{row}{actionsRow}</tr>
+      return <tr key={element.id} data-key={element.id}>{row}{actionsRow}</tr>
     })
 
     return rowData

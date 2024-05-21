@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react"
+import Cities from "../models/Cities.ts";
+import {IBeneficiary} from "../types/CommonTypes.ts";
 
 const useBeneficiary = () => {
-  const [data, setData] = useState(null)
+  const [data, setData] = useState<IBeneficiary[]>([])
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -23,18 +25,26 @@ const useBeneficiary = () => {
     return { data, loading }
   }
 
-  const addBeneficiary = async (data: BodyInit) => {
+  const addBeneficiary = async (newData: BodyInit) => {
     try {
       setLoading(true)
       const response = await fetch('http://localhost:5022/api/Beneficiary/Create', {
-        body: JSON.stringify(data),
+        body: JSON.stringify(newData),
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         }
       })
       const beneficiaries = await response.json()
-      setData(beneficiaries)
+      const mappedBeneficiaries: IBeneficiary = {
+          id: beneficiaries.id,
+          name: beneficiaries.name,
+          city: Cities[beneficiaries.cityId].name,
+          address: beneficiaries.address,
+          capacity: beneficiaries.capacity
+        }
+      data.push(mappedBeneficiaries)
+      return data
     } catch (err) {
       console.error(err)
     } finally {
@@ -42,9 +52,31 @@ const useBeneficiary = () => {
     }
   }
 
+  const editBeneficiary = async (updatedData: object) => {
+    setLoading(true)
+    await fetch(`http://localhost:5022/api/Beneficiary/Edit?id=${updatedData.id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updatedData),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  }
+
+  const deleteBeneficiary = async (id: string | undefined) => {
+    await fetch(`http://localhost:5022/api/Beneficiary/Delete?id=${id}`, {
+      method: 'DELETE'
+    })
+    const index = data.findIndex(element => element.id == id)
+    data.splice(index, 1)
+    return data
+  }
+
   return {
     getBeneficiary,
-    addBeneficiary
+    addBeneficiary,
+    editBeneficiary,
+    deleteBeneficiary
   }
 }
 
