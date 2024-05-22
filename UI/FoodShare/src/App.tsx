@@ -1,22 +1,18 @@
-import Card from './components/controls/card/Card'
-import CardHeader from './components/controls/card/CardHeader'
-import CardBody from './components/controls/card/CardBody'
-import Beneficiaries from './components/bussiness/Beneficiaries.tsx'
 import './App.css'
+import Admin from "./components/pages/Admin.tsx";
+import {Route, Routes} from "react-router-dom";
+import Donate from "./components/pages/Donate.tsx";
+import Benefit from "./components/pages/Benefit.tsx";
 
 
 function App() {
-  return (
-    <>
-      <Card>
-        <CardHeader>This is the title</CardHeader>
-        <CardBody>
-          Hello World!
-          <Beneficiaries />
-        </CardBody>
-      </Card>
-    </>
-  )
+    return (
+        <Routes>
+            <Route path='/' element={<Admin />} />
+            <Route path='/donate' element={<Donate />} />
+            <Route path='/benefit' element={<Benefit/>} />
+        </Routes>
+    )
 }
 
 export default App
